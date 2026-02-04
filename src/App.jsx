@@ -1,121 +1,178 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Heart, Sparkles, MailOpen, Stars } from 'lucide-react';
 import './App.css';
 
-const NO_MESSAGES = [
-  "Really? 🤨",
-  "Nope. Not happening 😌",
-  "Please say yes 🥺",
-  "I will wait for you 😭",
-  "Good try 😂",
-  "Think again... 🤔",
-  "Wrong answer! 🚫",
-  "Oops, try again 😅",
-  "Nah, click Yes 💕",
-  "You're breaking my heart 💔",
-  "Don't be shy 🙈",
-  "Come on! 🥹",
-  "Pretty please? 🌸",
-  "I won't give up 💪",
-  "Say yes already! 😩",
-  "You know you want to 😏",
-  "Why not? 🤷",
-  "Just say it... YES 💖",
-  "I'm waiting... ⏰",
-  "Forever chasing you 🏃‍♂️",
-  "My heart says try again ❤️",
-  "One more chance? 🙏",
-  "Are you playing hard to get? 😜",
-  "I'm not leaving 🚶‍♂️❌",
-  "Persistence is key 🔑",
-  "Click the right button 👉",
-  "Wrong button, sweetie 💋",
-  "Not that one! 🙅",
-  "The other button please 🥺",
-  "You're so cute when you try 😍",
-  "I love your stubbornness 💗",
-  "Challenge accepted 💪",
-  "Is that your final answer? 🎯",
-  "Reconsider? 🤗",
-  "I'll ask again... 🔄",
-  "You're making this fun 🎢",
-  "Keep trying 😈",
-  "Almost there! 🏁",
-  "So close to yes! 📍",
-  "One step closer 👣",
-  "Don't resist love 💘",
-  "Love always wins 🏆",
-  "You can't say no forever ♾️",
-  "I believe in us 🌟",
-  "We're meant to be ✨",
-  "Destiny says yes 🔮",
-  "The stars align for us ⭐",
-  "My heart chose you 💝",
-  "Say yes for me? 🥰",
-  "I'm blushing already 😊",
-  "You're my person 👫",
-  "Be mine? 💌",
-  "Pretty please with a cherry? 🍒",
-  "With sprinkles on top? 🎂",
-  "I made this just for you 🎁",
-  "You're worth the chase 🏃‍♀️",
-  "Never giving up on you 💖",
-  "You complete me 🧩",
-  "My heart skips for you 💓",
-  "You make me smile 😁",
-  "Every no brings us closer 📏",
-  "I'll keep trying 🔁",
-  "You're adorable 🐻",
-  "Love is patient 🕊️",
-  "Love is persistent 💪❤️",
-  "I've got all day ☀️",
-  "And all night 🌙",
-  "Forever if needed ♾️❤️",
-  "You're worth it 💎",
-  "Diamonds are forever, so is my love 💍",
-  "Just one little yes 🤏",
-  "Three letters: Y-E-S ✍️",
-  "Repeat after me: Yes 🗣️",
-  "Easy peasy! 🍋",
-  "You got this! 💪",
-  "I know you want to 🤭",
-  "Your heart says yes 💗",
-  "Listen to your heart ❤️‍🔥",
-  "Follow your heart 🧭",
-  "Trust me on this 🤞",
-  "We'll be amazing together 🌈",
-  "Picture us together 📸",
-  "Imagine the memories 🎞️",
-  "Adventures await us 🗺️",
-  "Let's write our story 📖",
-  "Chapter 1: You said yes 📕",
-  "Spoiler: You'll say yes 🎬",
-  "The ending is happy 🎉",
-  "Plot twist: It's love 💕",
-  "Still here waiting 🧍",
-  "Patiently yours 💌",
-  "Yours truly 💋",
-  "With love 💝",
-  "Hugs and kisses 🤗💋"
+const GIFT_DATA = [
+  {
+    id: 1,
+    title: "A Love Letter",
+    icon: "💌",
+    message: `My Dearest,
+
+You are my favorite part of every day. Every year we spend together is like a beautiful dream come true. Thank you for making our home full of smiles and my heart full of love.
+
+I am so lucky to have you by my side. Love you forever. 💖`,
+    revealType: "letter"
+  },
+  {
+    id: 2,
+    title: "Shared Memories",
+    icon: "📸",
+    message: "Every photograph here is a chapter of the incredible journey we've shared. From our first nervous dates to the beautiful family we've raised together, these memories are the treasures of my heart. They remind me of the laughter that filled our home, the lessons we learned through challenges, and the quiet love that grew even during the busiest days. Let's look back on the path we've walked—it's a journey I'd take a thousand times over, as long as it's with you.",
+    revealType: "memories"
+  },
+  {
+    id: 3,
+    title: "A Promise",
+    icon: "✨",
+    message: "To always respect the love we built, to carry our values forward, and to celebrate us—today and always. I promise to hold your hand through every future season, just as we have through the past.",
+    revealType: "promise"
+  }
+];
+
+const OrbitingHearts = () => (
+  <div className="global-orbit-container">
+    <motion.div
+      className="infinite-symbol-small"
+      animate={{ rotate: 360 }}
+      transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
+    >
+      {[...Array(10)].map((_, i) => (
+        <div key={i} className={`orbit-heart oh${i + 1}`} />
+      ))}
+    </motion.div>
+  </div>
+);
+
+const PHOTO_ASSETS = [
+  "/photos/photo1.jpg",
+  "/photos/photo2.jpg",
+  "/photos/photo3.jpg",
+  "/photos/photo4.jpg",
+  "/photos/photo5.jpg",
+  "/photos/photo6.jpg",
+  "/photos/photo7.jpg",
+  "/photos/photo8.jpg",
+  "/photos/photo9.jpg",
+  "/photos/photo10.jpg",
+  "/photos/photo11.jpg",
+  "/photos/photo0.jpg"
 ];
 
 const RAIN_EMOJIS = ['💕', '✨', '😘', '🥰', '💞', '✨', '🥰', '✨', '💖', '💗'];
 
 const ROMANTIC_SONG_URL = "/audio/song.mp3";
 
+const SparkleTrail = () => {
+  const [sparkles, setSparkles] = useState([]);
+
+  useEffect(() => {
+    const handleMove = (e) => {
+      const x = e.clientX || (e.touches && e.touches[0].clientX);
+      const y = e.clientY || (e.touches && e.touches[0].clientY);
+      if (!x || !y) return;
+
+      const newSparkle = {
+        id: Date.now(),
+        x,
+        y,
+        size: Math.random() * 10 + 5,
+        color: ['#ff4d6d', '#ff758f', '#ffb3c1', '#ffd700'][Math.floor(Math.random() * 4)]
+      };
+
+      setSparkles((prev) => [...prev.slice(-15), newSparkle]);
+    };
+
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('touchmove', handleMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('touchmove', handleMove);
+    };
+  }, []);
+
+  return (
+    <div className="sparkle-trail-container">
+      <AnimatePresence>
+        {sparkles.map((s) => (
+          <motion.div
+            key={s.id}
+            initial={{ opacity: 1, scale: 0 }}
+            animate={{ opacity: 0, scale: 1.5, y: -20 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="sparkle"
+            style={{
+              left: s.x,
+              top: s.y,
+              width: s.size,
+              height: s.size,
+              background: s.color,
+            }}
+          />
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const RosePetals = () => {
+  const petals = useRef([...Array(12)].map((_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    duration: 10 + Math.random() * 15,
+    delay: Math.random() * 10,
+    rotate: Math.random() * 360,
+    size: 15 + Math.random() * 20
+  })));
+
+  return (
+    <div className="rose-petals-container">
+      {petals.current.map((p) => (
+        <motion.div
+          key={p.id}
+          className="petal"
+          initial={{ y: -100, x: 0, rotate: p.rotate, opacity: 0 }}
+          animate={{
+            y: ['0vh', '110vh'],
+            x: [0, Math.random() * 100 - 50, 0],
+            rotate: p.rotate + 720,
+            opacity: [0, 1, 1, 0]
+          }}
+          transition={{
+            duration: p.duration,
+            repeat: Infinity,
+            delay: p.delay,
+            ease: "linear"
+          }}
+          style={{
+            left: p.left,
+            width: p.size,
+            height: p.size,
+          }}
+        >
+          🌸
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
 function App() {
-  const [phase, setPhase] = useState('proposing');
-  const [noCount, setNoCount] = useState(0);
-  const [noPosition, setNoPosition] = useState({ x: 0, y: 0 });
-  const [isExpanding, setIsExpanding] = useState(false);
+  const [phase, setPhase] = useState('intro');
+  const [selectedGift, setSelectedGift] = useState(null);
   const audioRef = useRef(null);
-  const noBtnRef = useRef(null);
   const cardRef = useRef(null);
 
-  // Detect mobile for performance optimization
-  const isMobile = window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Background hearts - fewer on mobile
   const hearts = useRef([...Array(isMobile ? 6 : 15)].map((_, i) => ({
@@ -175,36 +232,36 @@ function App() {
     }
   }, []);
 
-  const handleNoHover = () => {
+  const handleOpenSurprise = () => {
     startMusic();
-    const cardRect = cardRef.current?.getBoundingClientRect();
-    if (!cardRect) return;
-
-    const btnWidth = 160;
-    const btnHeight = 55;
-    const padding = 50;
-    const maxX = cardRect.width - btnWidth - padding;
-    const maxY = cardRect.height - btnHeight - padding;
-
-    const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
-    const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
-
-    setNoPosition({ x: randomX, y: randomY });
-    setNoCount(prev => prev + 1);
+    setPhase('gift_selection');
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#ff4d6d', '#ffd700', '#ff8fa3']
+    });
   };
 
-  const handleYes = () => {
+  const handleSelectGift = (gift) => {
     startMusic();
-    setIsExpanding(true);
+    setSelectedGift(gift);
+    setPhase('gift_detail');
+    confetti({
+      particleCount: 100,
+      spread: 160,
+      origin: { y: 0.8 },
+      colors: ['#ff4d6d', '#ff758f', '#ffffff']
+    });
+  };
 
-    setTimeout(() => {
-      setPhase('celebrating');
-      triggerFirecrackers();
-    }, 600);
+  const handleBackToGifts = () => {
+    setPhase('gift_selection');
+    setSelectedGift(null);
+  };
 
-    setTimeout(() => {
-      setPhase('reading');
-    }, 6000);
+  const handleBackToIntro = () => {
+    setPhase('intro');
   };
 
   const triggerFirecrackers = () => {
@@ -317,9 +374,17 @@ function App() {
     }
   };
 
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
     <div className="app-container" onClick={startMusic}>
       <audio ref={audioRef} src={ROMANTIC_SONG_URL} loop />
+
+      <SparkleTrail />
+      <RosePetals />
 
       {/* Background Hearts */}
       <div className="bg-hearts">
@@ -340,267 +405,390 @@ function App() {
       </div>
 
       <AnimatePresence mode="wait">
-        {phase === 'proposing' && (
+        {phase === 'intro' && (
           <motion.div
-            key="proposal"
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{
-              opacity: isExpanding ? 0 : 1,
-              scale: isExpanding ? 1.15 : 1,
-            }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            exit={{ opacity: 0, scale: 1.2 }}
-            className="card-wrapper"
-          >
-            {/* Floating Sparkles around card */}
-            {sparkles.current.map((s) => (
-              <motion.div
-                key={s.id}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{
-                  opacity: [0, 1, 0.5, 1, 0],
-                  scale: [0.5, 1.2, 1, 1.2, 0.5],
-                  rotate: [0, 180, 360]
-                }}
-                transition={{
-                  duration: 4,
-                  delay: s.delay,
-                  repeat: Infinity,
-                  repeatDelay: 1
-                }}
-                style={{
-                  position: 'absolute',
-                  left: `${s.x}%`,
-                  top: `${s.y}%`,
-                  pointerEvents: 'none',
-                  zIndex: 5
-                }}
-              >
-                <Stars size={s.size} color="#ffd700" fill="#ffd700" />
-              </motion.div>
-            ))}
-
-            <div ref={cardRef} className="glass-card proposal-card" style={{ position: 'relative' }}>
-              {/* Animated Heart with Glow */}
-              <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{
-                  scale: 1,
-                  rotate: 0,
-                  y: [0, -15, 0],
-                }}
-                transition={{
-                  scale: { duration: 0.8, ease: "backOut" },
-                  rotate: { duration: 0.8, ease: "backOut" },
-                  y: { repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: 0.8 }
-                }}
-                className="floating-icon"
-              >
-                <motion.div
-                  animate={!isMobile ? {
-                    filter: [
-                      "drop-shadow(0 0 10px rgba(255, 77, 109, 0.3))",
-                      "drop-shadow(0 0 25px rgba(255, 77, 109, 0.6))",
-                      "drop-shadow(0 0 10px rgba(255, 77, 109, 0.3))"
-                    ]
-                  } : {}}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <Heart size={100} color="#ff4d6d" fill="#ff4d6d" />
-                </motion.div>
-              </motion.div>
-
-              {/* Animated Title */}
-              <motion.h1
-                variants={titleVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                Will you be my Valentine?
-              </motion.h1>
-
-              {/* Animated Subtitle */}
-              <motion.p
-                variants={subtitleVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                I've been waiting to ask you this...
-              </motion.p>
-
-              {/* Animated Buttons */}
-              <motion.div
-                className="btn-group"
-                variants={buttonVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                <motion.button
-                  whileHover={{
-                    scale: 1.08,
-                    boxShadow: "0 15px 40px -8px rgba(255, 77, 109, 0.5)"
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleYes}
-                  className="btn btn-yes"
-                >
-                  <motion.span
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    Yes
-                  </motion.span>
-                </motion.button>
-
-                <motion.button
-                  ref={noBtnRef}
-                  animate={noCount > 0 ? {
-                    position: 'absolute',
-                    left: noPosition.x,
-                    top: noPosition.y,
-                  } : {}}
-                  transition={{ type: "tween", ease: "circOut", duration: 0.3 }}
-                  onMouseEnter={handleNoHover}
-                  onClick={handleNoHover}
-                  className="btn btn-no"
-                  style={{
-                    position: noCount > 0 ? 'absolute' : 'relative',
-                    zIndex: 9999,
-                  }}
-                >
-                  {noCount === 0 ? "No" : NO_MESSAGES[noCount % NO_MESSAGES.length]}
-                </motion.button>
-              </motion.div>
-
-              {/* Corner Decorations */}
-              <motion.div
-                className="corner-decor top-left"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              >
-                <Sparkles size={24} color="#ffd700" />
-              </motion.div>
-              <motion.div
-                className="corner-decor top-right"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              >
-                <Sparkles size={24} color="#ffd700" />
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-
-        {phase === 'celebrating' && (
-          <motion.div
-            key="celebration"
+            key="intro"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="full-overlay celebration-view"
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 1 }}
+            className="intro-container"
           >
-            {/* Emoji Rain */}
-            {emojiRain.current.map((item) => (
-              <motion.div
-                key={item.id}
-                initial={{ y: '-10vh', x: item.left, opacity: 0 }}
-                animate={{
-                  y: '110vh',
-                  opacity: [0, 1, 1, 0.5],
-                  rotate: [0, 360]
-                }}
-                transition={{
-                  duration: item.duration + 2,
-                  delay: item.delay,
-                  ease: "linear",
-                  repeat: Infinity
-                }}
-                style={{
-                  position: 'absolute',
-                  left: item.left,
-                  fontSize: `${item.size}rem`,
-                  pointerEvents: 'none'
-                }}
-              >
-                {item.emoji}
-              </motion.div>
-            ))}
+            {/* Mobile Hanging Photos for Home Page */}
+            {isMobile && (
+              <>
+                <div className="mobile-hanging-row top home">
+                  {PHOTO_ASSETS.slice(0, 3).map((photo, i) => (
+                    <motion.div key={i} className="mobile-frame" variants={itemVariants}>
+                      <div className="mobile-string" />
+                      <img src={photo} alt="" />
+                    </motion.div>
+                  ))}
+                </div>
+                <div className="mobile-hanging-row bottom home">
+                  {PHOTO_ASSETS.slice(3, 6).map((photo, i) => (
+                    <motion.div key={i} className="mobile-frame" variants={itemVariants}>
+                      <div className="mobile-string" />
+                      <img src={photo} alt="" />
+                    </motion.div>
+                  ))}
+                </div>
+              </>
+            )}
 
-            <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, ease: "backOut", delay: 0.3 }}
-              className="celebration-content"
-            >
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}
-                className="celebration-heart"
-              >
-                <Heart size={120} color="#ff4d6d" fill="#ff4d6d" />
-              </motion.div>
+            {!isMobile && (
+              <div className="homepage-photo-wall">
+                {PHOTO_ASSETS.map((photo, i) => (
+                  <motion.div
+                    key={i}
+                    className="homepage-frame-wrapper"
+                    initial={{ y: -150, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.5 + i * 0.1, duration: 1, ease: "backOut" }}
+                    style={{
+                      left: i < 6 ? `${i * 8 + 2}%` : `${(i - 6) * 8 + 55}%`,
+                      top: (i % 3) * 15 + (i % 2 === 0 ? 5 : 10) + '%',
+                      zIndex: 2
+                    }}
+                  >
+                    <div className="frame-string" />
+                    <motion.div
+                      className="elegant-frame-small"
+                      animate={{ rotate: [i % 2 === 0 ? -1.5 : 1.5, i % 2 === 0 ? 1.5 : -1.5, i % 2 === 0 ? -1.5 : 1.5] }}
+                      transition={{ repeat: Infinity, duration: 3 + Math.random() * 2, ease: "easeInOut" }}
+                    >
+                      <img src={photo} alt="" />
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
 
-              <motion.h2
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-              >
-                YES
-              </motion.h2>
+            {/* Global Orbiting Hearts Animation on Home */}
+            <div className="home-orbit-wrapper">
+              <OrbitingHearts />
+            </div>
 
+            {/* Restored Love Ladder on Right Side */}
+            <div className="love-ladder-container">
+              {[...Array(6)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="ladder-step"
+                  initial={{ x: 50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 2 + i * 0.3 }}
+                >
+                  <Heart size={20 + i * 5} color="#ff4d6d" fill={i % 2 === 0 ? "#ff4d6d" : "none"} />
+                  {i < 5 && <div className="ladder-line" />}
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="opening-text">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 1 }}
+              >
+                A story that began long ago... <br />
+                and still shines today ✨
+              </motion.h1>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-                className="celebration-subtitle"
+                transition={{ delay: 1.5, duration: 1 }}
+                className="opening-subtext"
               >
-                You made me the happiest🤗🤗
+                This is for Mom & Dad forever and always.
               </motion.p>
-            </motion.div>
+            </div>
+
+            <motion.button
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 3.5, duration: 0.8 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleOpenSurprise}
+              className="btn-surprise"
+              style={{ marginBottom: '80px' }} // Explicitly pushed upward
+            >
+              Click to Open a Little Surprise🥰
+            </motion.button>
           </motion.div>
         )}
 
-        {phase === 'reading' && (
+        {phase === 'gift_selection' && (
           <motion.div
-            key="letter"
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
-            className="card-wrapper"
+            key="gift_selection"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.2 }
+              },
+              exit: { opacity: 0, scale: 0.9 }
+            }}
+            className="gift-selection-view"
           >
-            <div className="glass-card letter-card">
-              <div className="letter-header">
-                <motion.div animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
-                  <MailOpen size={40} color="#ff4d6d" />
+            <h2 className="selection-title">Choose a Special Gift</h2>
+            <OrbitingHearts />
+            <div className="gift-cards-grid">
+              {GIFT_DATA.map((gift) => (
+                <motion.div
+                  key={gift.id}
+                  variants={{
+                    hidden: { y: 50, opacity: 0, scale: 0.8 },
+                    visible: { y: 0, opacity: 1, scale: 1 }
+                  }}
+                  className="gift-card-item"
+                  whileHover={{ y: -15, scale: 1.05, boxShadow: "0 25px 50px rgba(255, 77, 109, 0.2)" }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleSelectGift(gift)}
+                >
+                  <span className="gift-card-icon">{gift.icon}</span>
+                  <p className="gift-card-title">{gift.title}</p>
+                  <div className="card-glow" />
+                  <motion.div
+                    className="card-shine"
+                    animate={{ left: ['-100%', '200%'] }}
+                    transition={{ repeat: Infinity, duration: 3, ease: 'linear', delay: Math.random() * 2 }}
+                  />
                 </motion.div>
-                <h2>A Love Letter for You 💌</h2>
-              </div>
-              <div className="letter-body">
-                <p>My dearest Valentine,</p>
-                <p>
-                  My love for you is like a software update, I didn't know I needed it, but now my whole system runs better.
-                </p>
-                <p>
-                  Thanks for being the "Yes" to my "Will you?" Every day with you is my favorite chapter.
-                </p>
-                <p>
-                  You make my days so much brighter.
-                  I'm so incredibly happy you said YES! 😍
-                </p>
-                <p className="signature">
-                  Forever & Always Yours,<br />
-                  💕 Your Valentine
-                </p>
-              </div>
-              <motion.div
-                animate={{ scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] }}
-                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                className="bottom-icon"
-              >
-                <Sparkles size={30} color="#ff4d6d" />
-              </motion.div>
+              ))}
             </div>
+
+            {/* Background Floating Icons for Decoration */}
+            <div className="floating-icons-bg">
+              {['✨', '💝', '🌸', '✨', '💖'].map((emoji, i) => (
+                <motion.span
+                  key={i}
+                  animate={{
+                    y: [0, -20, 0],
+                    rotate: [0, 10, -10, 0]
+                  }}
+                  transition={{ repeat: Infinity, duration: 3 + i, ease: "easeInOut" }}
+                  style={{
+                    position: 'absolute',
+                    top: `${10 + i * 20}%`,
+                    left: i % 2 === 0 ? '5%' : '90%',
+                    fontSize: '2rem',
+                    opacity: 0.2
+                  }}
+                >
+                  {emoji}
+                </motion.span>
+              ))}
+            </div>
+
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2.5 }}
+              onClick={handleBackToIntro}
+              className="btn-back-intro"
+            >
+              ← Back to Start
+            </motion.button>
+          </motion.div>
+        )}
+
+        {phase === 'gift_detail' && selectedGift && (
+          <motion.div
+            key="gift_detail"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="gift-detail-view"
+          >
+            <OrbitingHearts />
+            {/* Desktop Side Hanging Photos */}
+            {!isMobile && (
+              <>
+                <div className="side-hanging-photos left">
+                  {selectedGift.revealType === 'memories'
+                    ? PHOTO_ASSETS.slice(2, 7).map((photo, i) => (
+                      <motion.div key={i} className="side-frame" variants={itemVariants}>
+                        <div className="string" />
+                        <img src={photo} alt="" />
+                      </motion.div>
+                    ))
+                    : PHOTO_ASSETS.slice(0, 6).map((photo, i) => (
+                      <motion.div key={i} className="side-frame" variants={itemVariants}>
+                        <div className="string" />
+                        <img src={photo} alt="" />
+                      </motion.div>
+                    ))
+                  }
+                </div>
+
+                <div className="side-hanging-photos right">
+                  {selectedGift.revealType === 'memories'
+                    ? PHOTO_ASSETS.slice(7, 12).map((photo, i) => (
+                      <motion.div key={i} className="side-frame" variants={itemVariants}>
+                        <div className="string" />
+                        <img src={photo} alt="" />
+                      </motion.div>
+                    ))
+                    : PHOTO_ASSETS.slice(6, 12).map((photo, i) => (
+                      <motion.div key={i} className="side-frame" variants={itemVariants}>
+                        <div className="string" />
+                        <img src={photo} alt="" />
+                      </motion.div>
+                    ))
+                  }
+                </div>
+              </>
+            )}
+
+            {/* Mobile Top & Bottom Hanging Photos */}
+            {isMobile && (
+              <>
+                <div className="mobile-hanging-row top">
+                  {PHOTO_ASSETS.slice(0, 6).map((photo, i) => (
+                    <motion.div key={i} className="mobile-frame" variants={itemVariants}>
+                      <div className="mobile-string" />
+                      <img src={photo} alt="" />
+                    </motion.div>
+                  ))}
+                </div>
+                <div className="mobile-hanging-row bottom">
+                  {PHOTO_ASSETS.slice(6, 12).map((photo, i) => (
+                    <motion.div key={i} className="mobile-frame" variants={itemVariants}>
+                      <div className="mobile-string" />
+                      <img src={photo} alt="" />
+                    </motion.div>
+                  ))}
+                </div>
+              </>
+            )}
+            {selectedGift.revealType === 'letter' && (
+              <div className="promise-reveal-box">
+                <div className="symbol-container">
+                  <motion.div
+                    className="infinite-symbol"
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+                  >
+                    <div className="orbiting-heart h1" />
+                    <div className="orbiting-heart h2" />
+                  </motion.div>
+                  <Stars className="promise-stars" color="#ffd700" />
+                </div>
+                <div className="promise-text-container">
+                  <motion.h2
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 1 }}
+                  >
+                    A Heartfelt Letter
+                  </motion.h2>
+                  <div className="letter-text-content">
+                    {selectedGift.message.split('\n\n').map((para, i) => (
+                      <motion.p
+                        key={i}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.5, duration: 1 }}
+                      >
+                        {para}
+                      </motion.p>
+                    ))}
+                  </div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.5 }}
+                    style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}
+                  >
+                    <Heart size={30} fill="#ff4d6d" color="#ff4d6d" />
+                  </motion.div>
+                </div>
+              </div>
+            )}
+
+            {selectedGift.revealType === 'memories' && (
+              <div className="memories-reveal-box">
+                <div className="memories-scroll-container">
+                  <div className="memories-gallery dual-feature">
+                    {/* Two Large Featured Photos in Middle */}
+                    <div className="dual-featured-container">
+                      <motion.div
+                        className="featured-memory large"
+                        initial={{ scale: 0.8, opacity: 0, rotate: -3 }}
+                        animate={{ scale: 1, opacity: 1, rotate: -2 }}
+                        transition={{ duration: 0.8 }}
+                      >
+                        <img src={PHOTO_ASSETS[0]} alt="Memory 1" />
+                      </motion.div>
+                      <motion.div
+                        className="featured-memory large"
+                        initial={{ scale: 0.8, opacity: 0, rotate: 3 }}
+                        animate={{ scale: 1, opacity: 1, rotate: 2 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                      >
+                        <img src={PHOTO_ASSETS[1]} alt="Memory 2" />
+                      </motion.div>
+                    </div>
+
+                    <motion.div
+                      className="memories-intro-text"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <p>{selectedGift.message}</p>
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedGift.revealType === 'promise' && (
+              <div className="promise-reveal-box">
+                <div className="symbol-container">
+                  <motion.div
+                    className="infinite-symbol"
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+                  >
+                    <div className="orbiting-heart h1" />
+                    <div className="orbiting-heart h2" />
+                  </motion.div>
+                  <Stars className="promise-stars" color="#ffd700" />
+                </div>
+                <div className="promise-text-container">
+                  <motion.h2
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 1 }}
+                  >
+                    A Promise
+                  </motion.h2>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5, duration: 1 }}
+                  >
+                    {selectedGift.message}
+                  </motion.p>
+                </div>
+              </div>
+            )}
+
+            {/* Global Back Button for all details */}
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={handleBackToGifts}
+              className="btn-back"
+            >
+              Back to Gifts
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
